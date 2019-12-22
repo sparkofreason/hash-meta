@@ -1,5 +1,5 @@
 (ns hashp
-  (:require [hash-f.core :refer :all]
+  (:require [hashtag.core :as ht :refer [defhashtag]]
             [puget.printer :as puget]
             [puget.color.ansi :as color]))
 
@@ -25,7 +25,7 @@
              (str (puget/pprint-str (:form t) print-opts) " => "))
            (puget/pprint-str (:result t) print-opts)))))
 
-(defhashfn p puget-print :stacktrace :fn)
+(defhashtag p puget-print :stacktrace-tx ht/current-frame)
 
 (defn mean [xs]
   (/ (double #p (reduce + xs)) #p (count xs)))

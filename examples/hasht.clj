@@ -1,9 +1,9 @@
 (ns hasht
-  (:require [hash-f.core :refer :all]
+  (:require [hashtag.core :as ht :refer [defhashtag]]
             [clojure.pprint :refer [pprint]]))
 
-(defhashfn t/foo #(tap> (assoc % :tag :foo)))
-(defhashfn t/bar #(tap> (assoc % :tag :bar)))
+(defhashtag t/foo #(tap> (assoc % :tag :foo)))
+(defhashtag t/bar #(tap> (assoc % :tag :bar)))
 
 (defn mean [xs]
   (/ (double #t/foo (reduce + xs)) #t/bar (count xs)))
