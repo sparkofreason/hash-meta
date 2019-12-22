@@ -1,15 +1,16 @@
-# Hashp
+# hash-f
 
-Hashp is a better `prn` for debugging Clojure code. Inspired by
-projects like [Spyscope][], Hashp (ab)uses data readers to make it
-easier to get useful debugging data sent to STDOUT.
+hash-f is derived from a fork of [weavejester/hashp][], and allows
+definition of "tagged literal" functions to aid in debugging. If
+"hashp (ab)uses data readers to make it easier to get debugging 
+data", hash-f beats them with a sh\*\*ty stick to achieve the same,
+but with more flexibility.
 
-[spyscope]: https://github.com/dgrnbrg/spyscope
+[weavejester/hashp]: https://github.com/weavejester/hashp
 
 ## Usage
 
-Once installed, you can add `#p` in front of any form you wish to
-print:
+To define 
 
 ```clojure
 (ns example.core)
