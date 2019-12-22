@@ -1,0 +1,7 @@
+{:paths ["src"]
+ :deps {clj-stacktrace {:mvn/version "0.2.8"}}
+ :aliases
+ {:test {:extra-paths ["test"]
+         :extra-deps {com.cognitect/transcriptor {:mvn/version "0.1.5"}}}
+  :examples {:extra-paths ["examples"]
+             :extra-deps {mvxcvi/puget {:mvn/version "1.2.0"}}}}}
