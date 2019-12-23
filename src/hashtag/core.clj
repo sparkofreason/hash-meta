@@ -71,7 +71,7 @@
   "Defines and registers a \"tagged literal\" reader macro which calls hander-fn
    with data for debugging the tagged form.
       * id - the name of the tag, e.g. p -> #p, foo/bar -> #foo/bar.
-      * handler-fn - a function of one argument with spec ::hashtag.core/trace-data.
+      * handler-fn - a function of one argument with spec :hashtag.core/debug-data.
       * opts - option key/value pairs.
          ** :locals? (false) - Default false. includes local bindings as a map.
          ** :stacktrace-tx (nil) - a transducer to process stackframes as defined in clj-stacktrace"

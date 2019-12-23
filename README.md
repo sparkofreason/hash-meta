@@ -3,7 +3,7 @@
 hashtag is derived from a fork of [weavejester/hashp][], and allows
 definition of "tagged literal" functions to aid in debugging. If
 "hashp (ab)uses data readers to make it easier to get debugging 
-data", hashtag beats them with a sh\*\*ty stick to achieve the same,
+data", hashtag beats them with a stick to achieve the same,
 but with more flexibility, inspired by this [hashp issue][].
 
 [weavejester/hashp]: https://github.com/weavejester/hashp
@@ -11,7 +11,14 @@ but with more flexibility, inspired by this [hashp issue][].
 
 ## Usage
 
-Use the `defhashtag` macro to define your own debugging hashtag. `defhashtag` requires an (optionally namespaced) name for your hashtag, and a single-argument handler function. The handler will be passed a map with spec `:hashtag.core/debug-data`.
+NOTE: pre-alpha, not yet published to clojars. Please give it a try 
+by either cloning locally or using `deps.edn` and `:git/url`. Expect
+breakage for now.
+
+Use the `defhashtag` macro to define your own debugging hashtag. `
+defhashtag` requires an (optionally namespaced) name for your hashtag, 
+and a single-argument handler function. The handler will be passed a 
+map with spec `:hashtag.core/debug-data`.
 
 ```clojure
 (ns hashpp
