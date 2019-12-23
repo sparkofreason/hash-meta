@@ -12,7 +12,8 @@ but with more flexibility, inspired by this [hashp issue][].
 ## Usage
 
 NOTE: pre-alpha, not yet published to clojars. Please give it a try 
-by either cloning locally or using `deps.edn` and `:git/url`.
+by either cloning locally or using `deps.edn` and `:git/url`. Expect
+breakage for now.
 
 Use the `defhashtag` macro to define your own debugging hashtag. `
 defhashtag` requires an (optionally namespaced) name for your hashtag, 
