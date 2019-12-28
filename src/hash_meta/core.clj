@@ -4,7 +4,7 @@
 
 (def transforms (atom #{}))
 
-(defn hide-hashtag-form
+(defn- hide-hashtag-form
   [form]
   (loop [[transform & transforms] @transforms]
     (if transform
@@ -15,21 +15,42 @@
           (recur transforms)))
       form)))
 
-(defn make-hashtag
-  [transform]
-  (swap! transforms conj transform)
+(defn- make-transform
+  [transform hide-nested?]
+  (when hide-nested? (swap! transforms conj transform))
   (fn [form]
-    (let [orig-form (walk/postwalk hide-hashtag-form form)]
-      `~(transform form orig-form))))
+    (if hide-nested?
+      (let [orig-form (walk/postwalk hide-hashtag-form form)]
+        `~(transform form orig-form))
+      `~(transform form))))
+
+(defn- make-hashtag
+  [id transform hide-nested?]
+  `(do
+      (def ~id (#'make-transform ~transform ~hide-nested?))
+      (set! *data-readers* (assoc *data-readers*
+                                  '~id #'~id))
+      #'~id))
 
 (defmacro defhashtag
-  "Defines and registers a \"tagged literal\" reader macro which calls hander-fn
-   with data for debugging the tagged form.
+  "Defines and registers a \"tagged literal\" reader macro which will transform
+   the tagged form and hide the effects of embedded hashtag expansions.
       * id - the name of the tag, e.g. p -> #p, foo/bar -> #foo/bar.
-      * transform - a 2 argument function..."
+      * transform - a 2 argument function. This function is used at macro-expansion,
+        so the usual macro rules apply. The first argument is the form
+        as seen by the compiler, including effects of nested hashtag
+        expansions. The second is the \"original\" form, as it would be seen
+        before expansion (and without any hashtags). Another way to think about
+        it is that the first form is the one you want to execute, while the
+        second is for display."
   [id transform]
-  `(do
-     (def ~id (make-hashtag ~transform))
-     (set! *data-readers* (assoc *data-readers*
-                                 '~id #'~id))
-     #'~id))
+  (make-hashtag id transform true))
+
+(defmacro defreader
+  [id transform]
+  "Defines and registers a \"tagged literal\" reader macro which will transform
+   the tagged form.
+      * id - the name of the tag, e.g. p -> #p, foo/bar -> #foo/bar.
+      * transform - a 1 argument function. This function is used at macro-expansion,
+        so the usual macro rules apply. The argument is the tagged form."
+  (make-hashtag id transform false))

@@ -1,5 +1,4 @@
 (ns cljs.clogex
-  #_(:require [debux.cs.core :as d :refer-macros [clog clogn clog clogn clog-last break]])
   (:require [cljs.clog :include-macros true]))
 
 ;;;; clog examples
