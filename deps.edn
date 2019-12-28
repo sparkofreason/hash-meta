@@ -1,7 +1,13 @@
 {:paths ["src"]
- :deps {clj-stacktrace {:mvn/version "0.2.8"}}
+ :deps {org.clojure/core.unify {:mvn/version "0.5.7"}}
  :aliases
  {:test {:extra-paths ["test"]
          :extra-deps {com.cognitect/transcriptor {:mvn/version "0.1.5"}}}
-  :examples {:extra-paths ["examples"]
-             :extra-deps {mvxcvi/puget {:mvn/version "1.2.0"}}}}}
+  :clj-examples {:extra-paths ["examples/clj"]
+                 :extra-deps {clj-stacktrace {:mvn/version "0.2.8"}
+                              mvxcvi/puget {:mvn/version "1.2.0"}}}
+  :debux-examples {:extra-paths ["examples/debux"]
+                   :extra-deps {philoskim/debux {:mvn/version "0.6.2"}
+                                org.clojure/core.async {:mvn/version "0.3.465"}}}
+  :cljs {:extra-deps {org.clojure/clojurescript {:mvn/version "1.10.520"}}
+         :main-opts ["-m" "cljs.main" "--repl"]}}}
