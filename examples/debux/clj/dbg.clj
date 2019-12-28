@@ -1,3 +1,5 @@
+;;; Derived from https://github.com/philoskim/debux/blob/master/examples/src/clj/examples/dbg.clj
+
 (ns clj.dbg
   (:require [hash-meta.core :as ht :refer [defhashtag]]
             [debux.core :as debux]))

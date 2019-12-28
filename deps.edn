@@ -6,6 +6,8 @@
   :clj-examples {:extra-paths ["examples/clj"]
                  :extra-deps {clj-stacktrace {:mvn/version "0.2.8"}
                               mvxcvi/puget {:mvn/version "1.2.0"}}}
+  :cljs-examples {:extra-paths ["examples/cljs"]
+                  :extra-deps {net.cgrand/macrovich {:mvn/version "0.2.1"}}}
   :debux-examples {:extra-paths ["examples/debux"]
                    :extra-deps {philoskim/debux {:mvn/version "0.6.2"}
                                 org.clojure/core.async {:mvn/version "0.3.465"}}}

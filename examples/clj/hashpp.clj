@@ -23,9 +23,7 @@
 
 (defhashtag pp pp-fn)
 
-(inc #pp (* 2
-            #pp (+ 3
-                   #pp (* 4 5))))
+(inc #pp (* 2 #pp (+ 3 #pp (* 4 5))))
 
 (defn f
   [x]

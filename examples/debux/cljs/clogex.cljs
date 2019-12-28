@@ -1,3 +1,4 @@
+;;; Derived from https://github.com/philoskim/debux/blob/master/examples/src/cljs/examples/clog.cljs
 (ns cljs.clogex
   (:require [cljs.clog :include-macros true]))
 

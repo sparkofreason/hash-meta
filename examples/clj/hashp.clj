@@ -1,3 +1,5 @@
+;;; Derived from https://github.com/weavejester/hashp/blob/master/src/hashp/core.clj
+
 (ns hashp.core
   (:require [hash-meta.core :as ht :refer [defhashtag]]
             [clj-stacktrace.core :as stacktrace]
