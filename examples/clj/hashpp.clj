@@ -49,3 +49,12 @@
 (->> (range 10)
      #pp->> (filter odd?)
      (map inc))
+
+(defhashtag p2 (fn [f f']
+                 `(let [r# ~f]
+                    (println "FOO" '~f' r#)
+                    r#)))
+
+(inc #p2 (* 2
+            #pp (+ 3
+                   #p2 (* 4 5))))
