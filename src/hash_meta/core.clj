@@ -25,7 +25,7 @@
           `~(transform form orig-form m))
         `~(transform form m)))))
 
-(defn- make-reader
+(defn make-reader
   [id transform hide-nested?]
   `(do
       (def ~id (#'make-transform ~transform ~hide-nested?))
