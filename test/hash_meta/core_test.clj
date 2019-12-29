@@ -47,15 +47,15 @@
     `(let [r# ~f]
        (tap> {:form '~f'
               :result r#
-              :meta ~m})
+              :meta (:a ~m)})
        r#)))
 
 
 (inc #tm ^{:a 2} (* 2 #tm (+ 3 #tm ^{:a 4} (* 4 5))))
 
-(check! #(= [{:meta {:a 4}, :result 20, :form '(* 4 5)}
-             {:meta {}, :result 23, :form '(+ 3 (* 4 5))}
-             {:meta {:a 2}, :result 46, :form '(* 2 (+ 3 (* 4 5)))}]
+(check! #(= [{:meta 4, :result 20, :form '(* 4 5)}
+             {:meta nil, :result 23, :form '(+ 3 (* 4 5))}
+             {:meta 2, :result 46, :form '(* 2 (+ 3 (* 4 5)))}]
             %)
         @ts)
 
