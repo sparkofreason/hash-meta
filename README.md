@@ -35,14 +35,14 @@ Example `#pp` definition:
 
 (defreader-n pp
   (fn [executable-form readable-form _]
-      `(let [r# ~executable-form]
-         (println '~readable-form' "=>" r#)
-         r#)))
+    `(let [r# ~executable-form]
+       (println '~readable-form "=>" r#)
+       r#)))
 
-(inc #pp (* 2 #pp (+ 3 #pp (* 4 5))))
-(* 4 5) => 20
-(+ 3 (* 4 5)) => 23
-(* 2 (+ 3 (* 4 5))) => 46
+user=> (inc #pp (foo 2 #pp (bar 3 #pp (foo 4 5))))
+(foo 4 5) => 20
+(bar 3 (foo 4 5)) => 23
+(foo 2 (bar 3 (foo 4 5))) => 46
 => 47
 ```
 
