@@ -31,9 +31,9 @@ Example `#pp` definition:
 
 ```clojure
 (ns hashpp
-  (:require [hash-meta.core :as ht :refer [defhashtag]]))
+  (:require [hash-meta.core :as ht :refer [defreader-n]]))
 
-(defhashtag pp
+(defreader-n pp
   (fn [executable-form readable-form _]
       `(let [r# ~executable-form]
          (println '~readable-form' "=>" r#)
@@ -62,11 +62,11 @@ You can also just mangle code, macro-style:
 ```
 
 `defreader` is just a short-cut for defining a data-reader macro. 
-`defhashtag` does a little more work, with the idea that you may want
+`defreader-n` does a little more work, with the idea that you may want
 access both to the executable form and a more readable pre-macroexpansion
 version (discussed further below).
 
-Both `defhashtag` and `defreader` will register your tagged literal
+Both `defreader-n` and `defreader` will register your tagged literal
 readers in Clojure, without requiring that you define a `data_readers.clj`
 file, which makes for easy hacking in the REPL. To use with ClojureScript, 
 you will need `data_readers.cljc`.
@@ -96,19 +96,19 @@ Example:
 form, and the second any metadata associated witht the form. The return value 
 should be a valid Clojure s-expression, as with any macro.
 
-### `defhashtag`
+### `defreader-n`
 
 Example:
 
 ```clojure
-(defhashtag t
+(defreader-n t
   (fn foo [f f' m]
     `(let [r# ~f]
        (println '~f' "=>" r# "<" (:t ~m "") ">")
        r#)))
 ```
  
-`defhashtag` takes two arguments:
+`defreader-n` takes two arguments:
  
 * `id` - any valid unnamespaced symbol
 * `transform` - a function of three arguments. The first argument is the form
@@ -126,10 +126,10 @@ work. Define the reader macro in a clj file:
 ```clojure
 ;;; hashpp.clj
 (ns hashpp
-  (:require [hash-meta.core :as ht :refer [defhashtag]]
+  (:require [hash-meta.core :as ht :refer [defreader-n]]
             [net.cgrand.macrovich :as macros]))
 
-(defhashtag pp
+(defreader-n pp
   (fn [f f']
       `(let [r# ~f]
          (macros/case
@@ -155,13 +155,13 @@ Then use the macro as required for the environment:
 (inc #pp (* 2 #pp (+ 3 #pp (* 4 5))))
 ```
 
-## `defreader` vs. `defhashtag`
+## `defreader` vs. `defreader-n`
 
 Example definitions:
 
 ```clojure
 (ns reader-vs-hash
-  (:require [hash-meta.core :as ht :refer [defhashtag defreader]]
+  (:require [hash-meta.core :as ht :refer [defreader-n defreader]]
             [clojure.pprint :refer [pprint]]))
 
 (defreader reader-p
@@ -171,7 +171,7 @@ Example definitions:
                 :form '~f})
        x#)))
 
-(defhashtag hashtag-p
+(defreader-n hashtag-p
   (fn [f f']
     `(let [x# ~f]
        (pprint {:result x#
@@ -226,7 +226,7 @@ progressively less-nested forms, the output is increasingly
 polluted with the macro-expansion, clearly not desirable for
 debugging. However, we still need to execute the expanded form
 to get the side-effects, which was the whole point of defining
-the reader tag in the first place. `defhashtag` facilitates this:
+the reader tag in the first place. `defreader-n` facilitates this:
 
 ```clojure
 user=> (inc #hashtag-p (* 2 #hashtag-p (+ 3 #hashtag-p (* 4 5))))
@@ -239,7 +239,7 @@ user=> (inc #hashtag-p (* 2 #hashtag-p (+ 3 #hashtag-p (* 4 5))))
 ```
 
 hash-meta will deal with different tags in nested
-forms, as long as they are defined with `defhashtag`. So this
+forms, as long as they are defined with `defreader-n`. So this
 also works (assuming definitions for `pp` and `p2`):
 
 ```clojure
@@ -266,7 +266,7 @@ example above, unification won't succeed, and you'll get the
 macro-expanded output for nested forms. Examples shown below:
 
 ```clojure
-(defhashtag t
+(defreader-n t
   (fn foo [f f' m]
     `(let [r# ~f]
        (println '~f' "=>" r# "<" (:t ~m "") ">")
@@ -283,7 +283,7 @@ This works as expected, since the forms and metadata passed to
 the function are output directly in their literal form. 
 
 ```clojure
-(defhashtag t
+(defreader-n t
   (fn foo [f f' m]
     `(let [r# ~f]
        (println '~f' "=>" r# "<" ~(:t m "") ">")
@@ -403,7 +403,7 @@ simply wrapping the form in a `let` and adding some output
 will not compile.
 
 ```clojure
-(defhashtag pp->>
+(defreader-n pp->>
   (fn [f f' _]
     `((fn [x#]
         (let [result# (->> x# ~f)]

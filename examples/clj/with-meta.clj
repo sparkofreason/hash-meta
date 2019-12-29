@@ -1,7 +1,7 @@
 (ns with-meta
-  (:require [hash-meta.core :as ht :refer [defhashtag]]))
+  (:require [hash-meta.core :as ht :refer [defreader-n]]))
 
-(defhashtag t
+(defreader-n t
   (fn foo [f f' m]
     `(let [r# ~f]
        (println '~f' "=>" r# "<" (:t ~m "") ">")

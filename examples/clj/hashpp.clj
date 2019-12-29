@@ -1,5 +1,5 @@
 (ns hashpp
-  (:require [hash-meta.core :as ht :refer [defhashtag]]
+  (:require [hash-meta.core :as ht :refer [defreader-n]]
             [clojure.pprint :refer [pprint]]))
 
 (def locals-sym (gensym "locals"))
@@ -21,7 +21,7 @@
               :locals ~locals-sym})
      x#))
 
-(defhashtag pp pp-fn)
+(defreader-n pp pp-fn)
 
 (inc #pp (* 2 #pp (+ 3 #pp (* 4 5))))
 
@@ -37,7 +37,7 @@
 
 (g 5)
 
-(defhashtag pp->>
+(defreader-n pp->>
   (fn [f f' _]
     `((fn [x#]
         (let [result# (->> x# ~f)]
@@ -49,7 +49,7 @@
      #pp->> (filter odd?)
      (map inc))
 
-(defhashtag p2
+(defreader-n p2
   (fn [f f' _]
     `(let [r# ~f]
        (println "FOO" '~f' r#)

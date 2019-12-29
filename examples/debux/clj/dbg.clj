@@ -1,10 +1,10 @@
 ;;; Derived from https://github.com/philoskim/debux/blob/master/examples/src/clj/examples/dbg.clj
 
 (ns clj.dbg
-  (:require [hash-meta.core :as ht :refer [defhashtag]]
+  (:require [hash-meta.core :as ht :refer [defreader-n]]
             [debux.core :as debux]))
 
-(defhashtag dbg
+(defreader-n dbg
   (fn [form orig-form _]
     `(debux/dbg ~form)))
 

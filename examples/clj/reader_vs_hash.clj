@@ -1,5 +1,5 @@
 (ns reader-vs-hash
-  (:require [hash-meta.core :as ht :refer [defhashtag defreader]]
+  (:require [hash-meta.core :as ht :refer [defreader-n defreader]]
             [clojure.pprint :refer [pprint]]))
 
 (defreader reader-p
@@ -9,7 +9,7 @@
                 :form '~f})
        x#)))
 
-(defhashtag hashtag-p
+(defreader-n hashtag-p
   (fn [f f' _]
     `(let [x# ~f]
        (pprint {:result x#

@@ -33,9 +33,9 @@
                                   '~id #'~id))
       #'~id))
 
-(defmacro defhashtag
-  "Defines and registers a \"tagged literal\" reader macro which will transform
-   the tagged form and hide the effects of embedded hashtag expansions.
+(defmacro defreader-n
+  "Defines and registers a \"nestable tagged literal\" reader macro which will transform
+   the tagged form and hide the effects of nested hashtag expansions.
       * id - the name of the tag, e.g. p -> #p, foo/bar -> #foo/bar.
       * transform - a 2 argument function. This function is used at macro-expansion,
         so the usual macro rules apply. The first argument is the form

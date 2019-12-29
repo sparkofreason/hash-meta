@@ -1,15 +1,15 @@
 (ns hash-meta.core-test
-  (:require [hash-meta.core :as ht :refer [defhashtag]]
+  (:require [hash-meta.core :as ht :refer [defreader-n]]
             [cognitect.transcriptor :as xr :refer (check!)]))
 
-(defhashtag t
+(defreader-n t
   (fn [f f' _]
     `(let [r# ~f]
        (tap> {:form '~f'
               :result r#})
        r#)))
 
-(defhashtag t2
+(defreader-n t2
   (fn [f f' _]
     `(let [r# ~f]
        (tap> {:f '~f'
@@ -42,7 +42,7 @@
 
 (reset! ts [])
 
-(defhashtag tm
+(defreader-n tm
   (fn [f f' m]
     `(let [r# ~f]
        (tap> {:form '~f'
