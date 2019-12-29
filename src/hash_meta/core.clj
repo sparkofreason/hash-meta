@@ -25,7 +25,7 @@
           `~(transform form orig-form m))
         `~(transform form m)))))
 
-(defn- make-hashtag
+(defn- make-reader
   [id transform hide-nested?]
   `(do
       (def ~id (#'make-transform ~transform ~hide-nested?))
@@ -45,7 +45,7 @@
         it is that the first form is the one you want to execute, while the
         second is for display."
   [id transform]
-  (make-hashtag id transform true))
+  (make-reader id transform true))
 
 (defmacro defreader
   [id transform]
@@ -54,4 +54,4 @@
       * id - the name of the tag, e.g. p -> #p, foo/bar -> #foo/bar.
       * transform - a 1 argument function. This function is used at macro-expansion,
         so the usual macro rules apply. The argument is the tagged form."
-  (make-hashtag id transform false))
+  (make-reader id transform false))
