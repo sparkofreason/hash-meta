@@ -3,14 +3,38 @@
 # tl;dr
 
 Provides macros to abuse Clojure reader tags. The main anticipated
-use-case is for customized debugging:
+use-case is for customized debugging. Why reader tags? They are
+minimally invasive in your code, and easily removed by find/replace
+or rendered no-ops by editing `data_readers.clj`.
+Examples:
+
+```clojure
+;;; We want to debug this expression
+(inc (foo 2 (bar 3 (foo 4 5))))
+
+;;; Do you want to rewrite like this:
+(let [r1 (foo 4 5)
+      _ (println "(foo 4 5)" r1)
+      r2 (bar 3 r1)
+      _ (println "(bar 3 r1)" r2)
+      r3 (foo 2 r2)
+      _ (println "(foo 2 r2") r3)
+      r4 (inc r3)]
+    (println "(inc r3)" r4)
+    r4)
+    
+;;; Or this?
+(inc #pp (foo 2 #pp (bar 3 #pp (foo 4 5))))
+```
+
+Example `#pp` definition:
 
 ```clojure
 (ns hashpp
   (:require [hash-meta.core :as ht :refer [defhashtag]]))
 
 (defhashtag pp
-  (fn [executable-form readable-form]
+  (fn [executable-form readable-form _]
       `(let [r# ~executable-form]
          (println '~readable-form' "=>" r#)
          r#)))
@@ -29,7 +53,7 @@ You can also just mangle code, macro-style:
   (:require [hash-meta.core :as ht :refer [defreader]]))
 
 (defreader i 
-  (fn [f]
+  (fn [f _]
     (let [[v1 op v2] f]
       `(~op ~v1 ~v2))))
 
@@ -45,7 +69,12 @@ version (discussed further below).
 Both `defhashtag` and `defreader` will register your tagged literal
 readers in Clojure, without requiring that you define a `data_readers.clj`
 file, which makes for easy hacking in the REPL. To use with ClojureScript, 
-you will need `data_readers.cljc`
+you will need `data_readers.cljc`.
+
+hash-meta is best used when you need macro-level functionality to define
+custom reader macros. If you just want customized processing of debug
+data via your own functions, the [hashtag][] library will be easier to
+use.
 
 ## Usage
 
@@ -55,7 +84,7 @@ Example:
 
 ```clojure
 (defreader i 
-  (fn [f]
+  (fn [f m]
     (let [[v1 op v2] f]
       `(~op ~v1 ~v2))))
 ```
@@ -63,31 +92,31 @@ Example:
 `defreader` takes two arguments:
 
 * `id` - any valid unnamespaced symbol
-* `transform` - a function of one argument. The argument will be the tagged 
-form, and the return value should be a valid Clojure s-expression, as 
-with any macro.
+* `transform` - a function of two arguments. The first argument will be the tagged 
+form, and the second any metadata associated witht the form. The return value 
+should be a valid Clojure s-expression, as with any macro.
 
 ### `defhashtag`
 
 Example:
 
 ```clojure
-(defhashtag pp
-  (fn [executable-form readable-form]
-      `(let [r# ~executable-form]
-         (println '~readable-form' "=>" r#)
-         r#)))
+(defhashtag t
+  (fn foo [f f' m]
+    `(let [r# ~f]
+       (println '~f' "=>" r# "<" (:t ~m "") ">")
+       r#)))
 ```
  
 `defhashtag` takes two arguments:
  
 * `id` - any valid unnamespaced symbol
-* `transform` - a function of two arguments. The first argument is the form
+* `transform` - a function of three arguments. The first argument is the form
 as seen by the compiler, and will include the results of macroexpansion of
 any nested hashtagged forms. The second argument is a "readable" version, the
 best guess of the unmangled form, before macroexpansion and minus any nested
-hashtags. The return value should be a valid Clojure s-expression, as 
-with any macro.
+hashtags. The third argument contains any metadata associated with the form.
+The return value should be a valid Clojure s-expression, as with any macro.
 
 ### ClojureScript
 
@@ -209,19 +238,7 @@ user=> (inc #hashtag-p (* 2 #hashtag-p (+ 3 #hashtag-p (* 4 5))))
 => 47
 ```
 
-[hashp] handles this for its specific implementation ([spyscope][]
-does not, which has blocked me from using it in the past).
-hash-meta needed to solve this for the general(ish) case of any
-reader macro definition. This is currently handled using
-[core.unify][], which is probably about as good as it's 
-going to get. The technique is far from bulletproof, and the
-rule of thumb to get it to work for you is that your reader
-macros need to keep the tagged form intact so it can be recognized
-and extracted. If you mangle the form as is done in the `infix` 
-example above, unification won't succeed, and you'll get the
-macro-expanded output for nested forms.
-
-Note that hash-meta will deal with different tags in nested
+hash-meta will deal with different tags in nested
 forms, as long as they are defined with `defhashtag`. So this
 also works (assuming definitions for `pp` and `p2`):
 
@@ -234,6 +251,56 @@ FOO (* 2 (+ 3 (* 4 5))) 46
 
 => 47
 ```
+
+[hashp] handles this for its specific implementation ([spyscope][]
+does not, which has blocked me from using it in the past).
+hash-meta needed to solve this for the general(ish) case of any
+reader macro definition. This is currently handled using
+[core.unify][], which is probably about as good as it's 
+going to get. The technique is far from bulletproof, and the
+rule of thumb to get it to work for you is that your reader
+macros need to keep the tagged form and metadata intact in the 
+literal output of the macro so it can be recognized
+and extracted. If you mangle the form as is done in the `infix` 
+example above, unification won't succeed, and you'll get the
+macro-expanded output for nested forms. Examples shown below:
+
+```clojure
+(defhashtag t
+  (fn foo [f f' m]
+    `(let [r# ~f]
+       (println '~f' "=>" r# "<" (:t ~m "") ">")
+       r#)))
+
+user=> (inc #t ^{:t :foo} (* 2 #t (+ 3 #t ^{:t "BAR" :other :metadata} (* 4 5))))
+(* 4 5) => 20 < BAR >
+(+ 3 (* 4 5)) => 23 <  >
+(* 2 (+ 3 (* 4 5))) => 46 < :foo >
+=> 47
+```
+
+This works as expected, since the forms and metadata passed to
+the function are output directly in their literal form. 
+
+```clojure
+(defhashtag t
+  (fn foo [f f' m]
+    `(let [r# ~f]
+       (println '~f' "=>" r# "<" ~(:t m "") ">")
+       r#)))
+
+user=> (inc #t ^{:t :foo} (* 2 #t (+ 3 #t ^{:t "BAR" :other :metadata} (* 4 5))))
+(* 4 5) => 20 < BAR >
+(+ 3 (clojure.core/let [r__4895__auto__ (* 4 5)] (clojure.core/println (quote (* 4 5)) => r__4895__auto__ < BAR >) r__4895__auto__)) => 23 <  >
+(* 2 (+ 3 (clojure.core/let [r__4895__auto__ (* 4 5)] (clojure.core/println (quote (* 4 5)) => r__4895__auto__ < BAR >) r__4895__auto__))) => 46 < :foo >
+=> 47
+```
+
+The change here is subtle. The expression to extract the metadata 
+attribute `:t` changed from `(:t ~m "")` to `~(:t m "")`, which
+ordinarily wouldn't make much difference, but here causes
+unification to not recognize the output form as coming from
+a registered hashtag.
 
 ## Motivation and Uses
 
@@ -249,10 +316,112 @@ to process the debug info, instead of just printing it with some
 hard-coded formatting choices.
 
 One obvious shortcoming became apparent while working on [hashtag][], 
-is that it would only work with functions. Many excellent debugging
+in that it would only work with functions. Many excellent debugging
 libraries like [postmortem] and [debux] use macros, and it seemed
 like you should be able to adapt the for use with the hashtag syntax
-advantages. Thus was born hash-meta.
+advantages. Thus was born hash-meta. Here's an example using the `dbgn`
+macro from [debux]:
+
+```clojure
+(defreader dbgn
+  (fn [form m]
+    (if-let [args (:args m)]
+      `(debux/dbgn ~form ~args)
+      `(debux/dbgn ~form))))
+ ```
+ 
+ Since `dbgn` is a macro, we have to use hash-meta instead of
+ [hashtag][]. We can now use `dbgn` as a reader tag:
+ 
+ ```clojure
+ #dbgn ^{:args :dup} (loop [acc 1 n 3]
+                      (if (zero? n)
+                        acc
+                        (recur (* acc n) (dec n))))
+
+{:ns clj.dbgn}
+dbgn: (loop [acc 1 n 3] (if (zero? n) acc (recur (* acc n) (dec n)))) =>
+ 
+| n =>
+|   3
+| (zero? n) =>
+|   false
+| acc =>
+|   1
+| n =>
+|   3
+| (* acc n) =>
+|   3
+| n =>
+|   3
+| (dec n) =>
+|   2
+ 
+| n =>
+|   2
+| (zero? n) =>
+|   false
+| acc =>
+|   3
+| n =>
+|   2
+| (* acc n) =>
+|   6
+| n =>
+|   2
+| (dec n) =>
+|   1
+ 
+| n =>
+|   1
+| (zero? n) =>
+|   false
+| acc =>
+|   6
+| n =>
+|   1
+| (* acc n) =>
+|   6
+| n =>
+|   1
+| (dec n) =>
+|   0
+ 
+| n =>
+|   0
+| (zero? n) =>
+|   true
+| acc =>
+|   6
+| (loop [acc 1 n 3] (debux.common.util/insert-blank-line) (if (zero? n)  ... =>
+|   6
+```
+
+Another case where macro-fu is required is debugging where
+threading macros are used. `->` and `->>` rewrite forms, so
+simply wrapping the form in a `let` and adding some output 
+will not compile.
+
+```clojure
+(defhashtag pp->>
+  (fn [f f' _]
+    `((fn [x#]
+        (let [result# (->> x# ~f)]
+          (pprint {:result result#
+                   :form '~f'})
+          result#)))))
+
+user=> (->> (range 10)
+            #pp->> (filter odd?)
+            (map inc))
+
+{:result (1 3 5 7 9), :form (filter odd?)}
+=> (2 4 6 8 10)
+```
+
+I would guess that hash-meta will usually be used as the basis
+for other libraries providing custom reader macros, as is done
+with [hashtag][].
 
 [core.unify]: https://github.com/clojure/core.unify
 [hashtag]: https://github.com/sparkofreason/hashtag
