@@ -3,7 +3,7 @@
             [net.cgrand.macrovich :as macros]))
 
 (defhashtag pp
-  (fn [f f']
+  (fn [f f' _]
       `(let [r# ~f]
          (macros/case
           :clj (println '~f' "=>" r#)

@@ -5,7 +5,7 @@
             [debux.core :as debux]))
 
 (defhashtag dbg
-  (fn [form orig-form]
+  (fn [form orig-form _]
     `(debux/dbg ~form)))
 
 ;;;; dbg examples

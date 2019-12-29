@@ -3,14 +3,14 @@
             [cognitect.transcriptor :as xr :refer (check!)]))
 
 (defhashtag t
-  (fn [f f']
+  (fn [f f' _]
     `(let [r# ~f]
        (tap> {:form '~f'
               :result r#})
        r#)))
 
 (defhashtag t2
-  (fn [f f']
+  (fn [f f' _]
     `(let [r# ~f]
        (tap> {:f '~f'
               :r r#})
@@ -37,6 +37,25 @@
 (check! #(= [{:result 20, :form '(* 4 5)}
              {:r 23, :f '(+ 3 (* 4 5))}
              {:result 46, :form '(* 2 (+ 3 (* 4 5)))}]
+            %)
+        @ts)
+
+(reset! ts [])
+
+(defhashtag tm
+  (fn [f f' m]
+    `(let [r# ~f]
+       (tap> {:form '~f'
+              :result r#
+              :meta ~m})
+       r#)))
+
+
+(inc #tm ^{:a 2} (* 2 #tm (+ 3 #tm ^{:a 4} (* 4 5))))
+
+(check! #(= [{:meta {:a 4}, :result 20, :form '(* 4 5)}
+             {:meta {}, :result 23, :form '(+ 3 (* 4 5))}
+             {:meta {:a 2}, :result 46, :form '(* 2 (+ 3 (* 4 5)))}]
             %)
         @ts)
 

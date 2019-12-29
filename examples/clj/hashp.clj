@@ -34,7 +34,7 @@
           :namespace-maps true}))
 
 (defhashtag p
-  (fn [form orig-form]
+  (fn [form orig-form _]
     `(let [result# ~form]
          (locking lock
            (println

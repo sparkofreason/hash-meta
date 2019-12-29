@@ -13,7 +13,7 @@
        (into {})))
 
 (defn pp-fn
-  [f f']
+  [f f' _]
   `(let [~locals-sym (locals)
          x# ~f]
      (pprint {:result x#
@@ -37,20 +37,22 @@
 
 (g 5)
 
-(defhashtag pp->> (fn [f f']
-                    `((fn [x#]
-                        (let [result# (->> x# ~f)]
-                          (pprint {:result result#
-                                   :form '~f'})
-                          result#)))))
+(defhashtag pp->>
+  (fn [f f' _]
+    `((fn [x#]
+        (let [result# (->> x# ~f)]
+          (pprint {:result result#
+                   :form '~f'})
+          result#)))))
 
 (->> (range 10)
      #pp->> (filter odd?)
      (map inc))
 
-(defhashtag p2 (fn [f f']
-                 `(let [r# ~f]
-                    (println "FOO" '~f' r#)
-                    r#)))
+(defhashtag p2
+  (fn [f f' _]
+    `(let [r# ~f]
+       (println "FOO" '~f' r#)
+       r#)))
 
 (inc #p2 (* 2 #pp (+ 3 #p2 (* 4 5))))

@@ -3,5 +3,5 @@
      :cljs (:require [debux.cs.core :as d :refer-macros [clog]])))
 
 #?(:clj (defhashtag clog
-          (fn [form orig-form]
+          (fn [form orig-form _]
             `(debux.cs.core/clog ~form))))

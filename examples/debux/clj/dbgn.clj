@@ -1,17 +1,20 @@
 ;;; Derived from https://github.com/philoskim/debux/blob/master/examples/src/clj/examples/dbgn.clj
 
 (ns clj.dbgn
-  (:require [hash-meta.core :as ht :refer [defhashtag]]
+  (:require [hash-meta.core :as ht :refer [defreader]]
             [debux.core :as debux]
             [clojure.core.async :refer [<! go-loop timeout]]))
 
-(defhashtag dbg
-  (fn [form orig-form]
+(defreader dbg
+  (fn [form  _]
     `(debux/dbg ~form)))
 
-(defhashtag dbgn
-  (fn [form orig-form]
-    `(debux/dbgn ~form)))
+(defreader dbgn
+  (fn [form m]
+    (if-let [args (:args m)]
+      `(debux/dbgn ~form ~args)
+      `(debux/dbgn ~form))))
+
 ;;;; dbgn examples
 
 ;;; simple example
@@ -236,14 +239,10 @@
           acc
           (recur (* acc n) (dec n))))
 
-(defhashtag dbgndup
-  (fn [form orig-form]
-    `(debux/dbgn ~form :dup)))
-
-#dbgndub (loop [acc 1 n 3]
-           (if (zero? n)
-             acc
-             (recur (* acc n) (dec n))))
+#dbgn ^{:args :dup} (loop [acc 1 n 3]
+                      (if (zero? n)
+                        acc
+                        (recur (* acc n) (dec n))))
 
 
 
@@ -264,8 +263,4 @@
 (defn mul2 [a b]
   #dbg (* a b))
 
-(defhashtag dbgnhello
-  (fn [form orig-form]
-    `(debux/dbgn ~form "hello")))
-
-#dbgnhello (+ n (mul2 3 4) (add2 10 20))
+#dbgn ^{:args "hello"} (+ n (mul2 3 4) (add2 10 20))

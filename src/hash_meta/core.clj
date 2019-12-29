@@ -8,7 +8,7 @@
   [form]
   (loop [[transform & transforms] @transforms]
     (if transform
-      (let [template (transform '?form '?form')
+      (let [template (transform '?form '?form' '?meta)
             u (u/unify template form)]
         (if u
           (u '?form')
@@ -19,10 +19,11 @@
   [transform hide-nested?]
   (when hide-nested? (swap! transforms conj transform))
   (fn [form]
-    (if hide-nested?
-      (let [orig-form (walk/postwalk hide-hashtag-form form)]
-        `~(transform form orig-form))
-      `~(transform form))))
+    (let [m (-> form meta (dissoc :line :column))]
+      (if hide-nested?
+        (let [orig-form (walk/postwalk hide-hashtag-form form)]
+          `~(transform form orig-form m))
+        `~(transform form m)))))
 
 (defn- make-hashtag
   [id transform hide-nested?]

@@ -3,14 +3,14 @@
             [clojure.pprint :refer [pprint]]))
 
 (defreader reader-p
-  (fn [f]
+  (fn [f _]
     `(let [x# ~f]
        (pprint {:result x#
                 :form '~f})
        x#)))
 
 (defhashtag hashtag-p
-  (fn [f f']
+  (fn [f f' _]
     `(let [x# ~f]
        (pprint {:result x#
                 :form '~f'})
