@@ -7,8 +7,7 @@
        (println '~f' "=>" r# "<" (:t ~m "") ">")
        r#)))
 
-(t ^{:t "BAR" :foo :bar} (* 4 5))
-(inc #t ^{:t :foo} (* 2 #t (+ 3 #t ^{:t "BAR" :foo :bar} (* 4 5))))
+(inc #t ^{:t :foo} (* 2 #t (+ 3 #t ^{:t "BAR" :other :metadata} (* 4 5))))
 
 (let [a 5]
   (* #t ^{:a :b} a 2))

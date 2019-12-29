@@ -19,7 +19,7 @@
   [transform hide-nested?]
   (when hide-nested? (swap! transforms conj transform))
   (fn [form]
-    (let [m (-> form meta (dissoc :line :column))]
+    (let [m (meta form)]
       (if hide-nested?
         (let [orig-form (walk/postwalk hide-hashtag-form form)]
           `~(transform form orig-form m))
