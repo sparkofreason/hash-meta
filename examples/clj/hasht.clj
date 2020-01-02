@@ -7,6 +7,8 @@
   (fn [f _ _]
     `(time ~f)))
 
+#t (Thread/sleep 1000)
+
 ;;; More juicy
 (defreader-n t+
   (fn [f f' _]
