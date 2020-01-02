@@ -1,7 +1,7 @@
 ;;; Derived from https://github.com/philoskim/debux/blob/master/examples/src/clj/examples/dbgn.clj
 
 (ns clj.dbgn
-  (:require [hash-meta.core :as ht :refer [defreader]]
+  (:require [sparkofreason.hash-meta.core :as ht :refer [defreader]]
             [debux.core :as debux]
             [clojure.core.async :refer [<! go-loop timeout]]))
 

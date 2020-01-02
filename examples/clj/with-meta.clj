@@ -1,5 +1,5 @@
 (ns with-meta
-  (:require [hash-meta.core :as ht :refer [defreader-n]]))
+  (:require [sparkofreason.hash-meta.core :as ht :refer [defreader-n]]))
 
 (defreader-n t
   (fn foo [f f' m]

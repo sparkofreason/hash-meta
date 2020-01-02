@@ -1,5 +1,5 @@
 (ns hasht
-  (:require [hash-meta.core :as ht :refer [defreader-n]]
+  (:require [sparkofreason.hash-meta.core :as ht :refer [defreader-n]]
             [clojure.pprint :refer [pprint]]))
 
 ;;; Simple

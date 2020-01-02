@@ -1,7 +1,7 @@
 ;;; Derived from https://github.com/weavejester/hashp/blob/master/src/hashp/core.clj
 
 (ns hashp.core
-  (:require [hash-meta.core :as ht :refer [defreader-n]]
+  (:require [sparkofreason.hash-meta.core :as ht :refer [defreader-n]]
             [clj-stacktrace.core :as stacktrace]
             [puget.printer :as puget]
             [puget.color.ansi :as color]))

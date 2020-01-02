@@ -1,4 +1,4 @@
-(ns hash-meta.core
+(ns sparkofreason.hash-meta.core
   (:require [clojure.walk :as walk]
             [clojure.core.unify :as u]))
 

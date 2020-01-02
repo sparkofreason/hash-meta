@@ -33,7 +33,7 @@ Example `#pp` definition:
 
 ```clojure
 (ns hashpp
-  (:require [hash-meta.core :as ht :refer [defreader-n]]))
+  (:require [sparkofreason.hash-meta.core :as ht :refer [defreader-n]]))
 
 (defreader-n pp
   (fn [executable-form readable-form _]
@@ -52,7 +52,7 @@ You can also just mangle code, macro-style:
 
 ```clojure
 (ns infix.clj
-  (:require [hash-meta.core :as ht :refer [defreader]]))
+  (:require [sparkofreason.hash-meta.core :as ht :refer [defreader]]))
 
 (defreader i 
   (fn [f _]
@@ -128,7 +128,7 @@ work. Define the reader macro in a clj file:
 ```clojure
 ;;; hashpp.clj
 (ns hashpp
-  (:require [hash-meta.core :as ht :refer [defreader-n]]
+  (:require [sparkofreason.hash-meta.core :as ht :refer [defreader-n]]
             [net.cgrand.macrovich :as macros]))
 
 (defreader-n pp
@@ -163,7 +163,7 @@ Example definitions:
 
 ```clojure
 (ns reader-vs-hash
-  (:require [hash-meta.core :as ht :refer [defreader-n defreader]]
+  (:require [sparkofreason.hash-meta.core :as ht :refer [defreader-n defreader]]
             [clojure.pprint :refer [pprint]]))
 
 (defreader reader-p

@@ -1,7 +1,7 @@
 ;;; Derived from https://github.com/philoskim/debux/blob/master/examples/src/clj/examples/dbg.clj
 
 (ns clj.dbg
-  (:require [hash-meta.core :as ht :refer [defreader-n]]
+  (:require [sparkofreason.hash-meta.core :as ht :refer [defreader-n]]
             [debux.core :as debux]))
 
 (defreader-n dbg

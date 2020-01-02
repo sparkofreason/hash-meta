@@ -1,5 +1,5 @@
 (ns cljs.clog
-  #?(:clj (:require [hash-meta.core :as ht :refer [defreader-n]])
+  #?(:clj (:require [sparkofreason.hash-meta.core :as ht :refer [defreader-n]])
      :cljs (:require [debux.cs.core :as d :refer-macros [clog]])))
 
 #?(:clj (defreader-n clog

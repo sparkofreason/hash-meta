@@ -1,5 +1,5 @@
-(ns hash-meta.core-test
-  (:require [hash-meta.core :as ht :refer [defreader-n]]
+(ns sparkofreason.hash-meta.core-test
+  (:require [sparkofreason.hash-meta.core :as ht :refer [defreader-n]]
             [cognitect.transcriptor :as xr :refer (check!)]))
 
 (defreader-n t

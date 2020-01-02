@@ -1,5 +1,5 @@
 (ns hashpp
-  (:require [hash-meta.core :as ht :refer [defreader-n]]
+  (:require [sparkofreason.hash-meta.core :as ht :refer [defreader-n]]
             [clojure.pprint :refer [pprint]]))
 
 (def locals-sym (gensym "locals"))

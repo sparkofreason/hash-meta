@@ -1,5 +1,5 @@
 (ns reader-vs-hash
-  (:require [hash-meta.core :as ht :refer [defreader-n defreader]]
+  (:require [sparkofreason.hash-meta.core :as ht :refer [defreader-n defreader]]
             [clojure.pprint :refer [pprint]]))
 
 (defreader reader-p

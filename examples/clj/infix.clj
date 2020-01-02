@@ -1,5 +1,5 @@
 (ns infix.clj
-  (:require [hash-meta.core :as ht :refer [defreader]]))
+  (:require [sparkofreason.hash-meta.core :as ht :refer [defreader]]))
 
 (defreader i
   (fn [f _]
