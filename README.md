@@ -4,7 +4,7 @@
 
 ## tl;dr
 
-Provides macros to abuse Clojure reader tags. The main anticipated
+Provides macros to abuse Clojure(Script) reader tags. The main anticipated
 use-case is for customized debugging. Why reader tags? They are
 minimally invasive in your code, and easily removed by find/replace
 or rendered no-ops by editing `data_readers.clj`.
