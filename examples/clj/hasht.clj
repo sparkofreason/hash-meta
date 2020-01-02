@@ -11,7 +11,6 @@
   (let [n (bigint n)]
     (loop [r 1N
            i 1N]
-      (println r i)
       (if (> i n)
         r
         (recur (* r i) (inc i))))))
