@@ -318,10 +318,23 @@ to process the debug info, instead of just printing it with some
 hard-coded formatting choices.
 
 One obvious shortcoming became apparent while working on [hashtag][], 
-in that it would only work with functions. Many excellent debugging
+in that it would only work with functions. Thus was born hash-meta. 
+The Clojure `time` macro provides a simple example.
+
+```clojure
+(defreader-n t
+  (fn [f _ _]
+    `(time ~f)))
+    
+user=> #t (Thread/sleep 1000)
+"Elapsed time: 1003.026079 msecs"
+=> nil
+```
+
+Many excellent debugging
 libraries like [postmortem] and [debux] use macros, and it seemed
-like you should be able to adapt the for use with the hashtag syntax
-advantages. Thus was born hash-meta. Here's an example using the `dbgn`
+like you should be able to adapt them for use with the hashtag syntax
+advantages. Here's an example using the `dbgn`
 macro from [debux]:
 
 ```clojure
@@ -434,6 +447,6 @@ with [hashtag][].
 
 ## License
 
-Copyright © 2019 Dave Dixon, James Reeves
+Copyright © 2020 Dave Dixon, James Reeves
 
 Released under the MIT license.
