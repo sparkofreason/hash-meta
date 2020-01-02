@@ -7,7 +7,7 @@
 (defmacro locals
   []
   ; Dubious method for determining if we're in CLJS, but it works for now.
-  (->> (if (contains? &env :js-globals) (:locals &env) &env)
+  (->> &env
        (remove (fn [[name _]] (= name locals-sym)))
        (map (fn [[name _]] `[~(keyword name) ~name]))
        (into {})))
