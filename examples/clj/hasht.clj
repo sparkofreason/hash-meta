@@ -2,9 +2,22 @@
   (:require [hash-meta.core :as ht :refer [defreader-n]]
             [clojure.pprint :refer [pprint]]))
 
+;;; Simple
 (defreader-n t
   (fn [f _ _]
     `(time ~f)))
+
+;;; More juicy
+(defreader-n t+
+  (fn [f f' _]
+    `(let [start# (. System (nanoTime))
+           r# ~f
+           elapsed# (/ (double (- (. System (nanoTime)) start#)) 1000000.0)]
+       (pprint {:result r#
+                :form '~f'
+                :elapsed-ms elapsed#})
+       r#)))
+
 
 (defn f
   [n]
@@ -17,7 +30,7 @@
 
 (defn g
   [n]
-  (let [fact #t (f n)]
+  (let [fact #t+ (f n)]
     (* fact fact)))
 
-(g 1000)
+(g 100)
