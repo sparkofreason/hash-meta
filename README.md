@@ -1,6 +1,8 @@
 # hash-meta
 
-# tl;dr
+[![Clojars Project](https://img.shields.io/clojars/v/org.clojars.sparkofreason/hash-meta.svg)](https://clojars.org/org.clojars.sparkofreason/hash-meta)
+
+## tl;dr
 
 Provides macros to abuse Clojure reader tags. The main anticipated
 use-case is for customized debugging. Why reader tags? They are
