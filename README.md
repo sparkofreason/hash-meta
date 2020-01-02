@@ -1,6 +1,6 @@
 # hash-meta
 
-[![Clojars Project](https://img.shields.io/clojars/v/org.clojars.sparkofreason/hash-meta.svg)](https://clojars.org/org.clojars.sparkofreason/hash-meta)
+[![Clojars Project](https://img.shields.io/clojars/v/sparkofreason/hash-meta.svg)](https://clojars.org/sparkofreason/hash-meta)
 
 ## tl;dr
 
