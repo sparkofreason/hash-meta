@@ -49,11 +49,11 @@
   (make-reader id transform true))
 
 (defmacro defreader
-  [id transform]
   "Defines and registers a \"tagged literal\" reader macro which will transform
    the tagged form.
       * id - the name of the tag, e.g. p -> #p.
       * transform - a 2 argument function. This function is used at macro-expansion,
         so the usual macro rules apply. The first argument is the tagged form.
         The second argument is any metadata associated with the tagged form."
+  [id transform]
   (make-reader id transform false))
