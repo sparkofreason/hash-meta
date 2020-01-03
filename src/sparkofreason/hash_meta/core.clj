@@ -2,11 +2,11 @@
   (:require [clojure.walk :as walk]
             [clojure.core.unify :as u]))
 
-(def transforms (atom #{}))
+(def transforms (atom {}))
 
 (defn- hide-hashtag-form
   [form]
-  (loop [[transform & transforms] @transforms]
+  (loop [[transform & transforms] (vals @transforms)]
     (if transform
       (let [template (transform '?form '?form' '?meta)
             u (u/unify template form)]
@@ -16,8 +16,8 @@
       form)))
 
 (defn- make-transform
-  [transform hide-nested?]
-  (when hide-nested? (swap! transforms conj transform))
+  [id transform hide-nested?]
+  (when hide-nested? (swap! transforms assoc id transform))
   (fn [form]
     (let [m (meta form)]
       (if hide-nested?
@@ -28,13 +28,12 @@
 (defn make-reader
   [id transform hide-nested?]
   `(do
-      (def ~id (#'make-transform ~transform ~hide-nested?))
-      (set! *data-readers* (assoc *data-readers*
-                                  '~id #'~id))
+      (def ~id (#'make-transform '~id ~transform ~hide-nested?))
+      (set! *data-readers* (assoc *data-readers* '~id #'~id))
       #'~id))
 
 (defmacro defreader-n
-  "Defines and registers a \"nestable tagged literal\" reader macro which will transform
+  "Defines a \"nestable tagged literal\" reader macro which will transform
    the tagged form and hide the effects of nested hashtag expansions.
       * id - the name of the tag, e.g. p -> #p.
       * transform - a 3 argument function. This function is used at macro-expansion,
@@ -49,7 +48,7 @@
   (make-reader id transform true))
 
 (defmacro defreader
-  "Defines and registers a \"tagged literal\" reader macro which will transform
+  "Defines a \"tagged literal\" reader macro which will transform
    the tagged form.
       * id - the name of the tag, e.g. p -> #p.
       * transform - a 2 argument function. This function is used at macro-expansion,

@@ -1,8 +1,8 @@
 (ns with-meta
-  (:require [sparkofreason.hash-meta.core :as ht :refer [defreader-n]]))
+  (:require [sparkofreason.hash-meta.core :refer [defreader-n]]))
 
 (defreader-n t
-  (fn foo [f f' m]
+  (fn [f f' m]
     `(let [r# ~f]
        (println '~f' "=>" r# "<" (:t ~m "") ">")
        r#)))
