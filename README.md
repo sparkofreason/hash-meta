@@ -68,10 +68,13 @@ You can also just mangle code, macro-style:
 access both to the executable form and a more readable pre-macroexpansion
 version (discussed further below).
 
-Both `defreader-n` and `defreader` will register your tagged literal
-readers in Clojure, without requiring that you define a `data_readers.clj`
-file, which makes for easy hacking in the REPL. To use with ClojureScript, 
-you will need `data_readers.cljc`.
+Both `defreader-n` and `defreader` will modify the thread-local binding of
+`clojure.core/*data-readers*` to include your reader tag definition. This
+makes for easy hacking in the REPL, since you can define and use the tag
+in the same namespace as shown above, without having to add it to your
+`data_readers.clj(c)` file. To use with ClojureScript at all, or to use
+your reader tag in the general case in Clojure code,
+you will need `data_readers.clj(c)`.
 
 hash-meta is best used when you need macro-level functionality to define
 custom reader macros. If you just want customized processing of debug
