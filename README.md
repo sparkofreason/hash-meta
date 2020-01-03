@@ -68,10 +68,13 @@ You can also just mangle code, macro-style:
 access both to the executable form and a more readable pre-macroexpansion
 version (discussed further below).
 
-Both `defreader-n` and `defreader` will register your tagged literal
-readers in Clojure, without requiring that you define a `data_readers.clj`
-file, which makes for easy hacking in the REPL. To use with ClojureScript, 
-you will need `data_readers.cljc`.
+Both `defreader-n` and `defreader` will modify the thread-local binding of
+`clojure.core/*data-readers*` to include your reader tag definition. This
+makes for easy hacking in the REPL, since you can define and use the tag
+in the same namespace as shown above, without having to add it to your
+`data_readers.clj(c)` file. To use with ClojureScript at all, or to use
+your reader tag in the general case in Clojure code,
+you will need to modify `data_readers.clj(c)`.
 
 hash-meta is best used when you need macro-level functionality to define
 custom reader macros. If you just want customized processing of debug
@@ -120,10 +123,10 @@ best guess of the unmangled form, before macroexpansion and minus any nested
 hashtags. The third argument contains any metadata associated with the form.
 The return value should be a valid Clojure s-expression, as with any macro.
 
-### ClojureScript
+### Using a reader tag
 
-hash-meta definitions can be used with ClojureScript and CLJC, with a little more
-work. Define the reader macro in a clj file:
+hash-meta definitions can be used with in general with CLJ/CLJS/CLJC code. 
+Define the reader macro in a clj file (or via reader-conditional in cljc):
 
 ```clojure
 ;;; hashpp.clj
@@ -317,6 +320,12 @@ the [hashp][] approach, allowing an arbitrary function to be supplied
 to process the debug info, instead of just printing it with some
 hard-coded formatting choices.
 
+I would guess that hash-meta will usually be used as the basis
+for other libraries providing custom reader macros, as is done
+with [hashtag][].
+
+### Macros as reader tags
+
 One obvious shortcoming became apparent while working on [hashtag][], 
 in that it would only work with functions. Thus was born hash-meta. 
 The Clojure `time` macro provides a simple example.
@@ -412,6 +421,7 @@ dbgn: (loop [acc 1 n 3] (if (zero? n) acc (recur (* acc n) (dec n)))) =>
 |   6
 ```
 
+### Debugging in the context of other macros
 Another case where macro-fu is required is debugging where
 threading macros are used. `->` and `->>` rewrite forms, so
 simply wrapping the form in a `let` and adding some output 
@@ -434,9 +444,42 @@ user=> (->> (range 10)
 => (2 4 6 8 10)
 ```
 
-I would guess that hash-meta will usually be used as the basis
-for other libraries providing custom reader macros, as is done
-with [hashtag][].
+### Configuration-based debugging
+
+Not unique to hash-meta, but it can be handy to leave the debugging
+tags in your code, and elide them at compile time based on some 
+configuration variable.
+
+```clojure
+(ns elision
+  (:require [sparkofreason.hash-meta.core :refer [defreader-n]]))
+
+(def ^:dynamic *debug?* true)
+
+(defreader-n tap
+  (fn [f f' m]
+    (if *debug?*
+      `(let [r# ~f]
+         (tap> {:form '~f'
+                :result r#
+                :metadata ~m})
+         r#)
+      `~f)))
+
+(add-tap println)
+
+user=> (inc #tap (* 2 #tap (+ 3 #tap (* 4 5))))
+{:result 20, :form (* 4 5), :metadata {:line 19, :column 43}}
+{:result 23, :form (+ 3 (* 4 5)), :metadata {:line 19, :column 33}}
+{:result 46, :form (* 2 (+ 3 (* 4 5))), :metadata {:line 19, :column 23}}
+=> 47
+
+(alter-var-root #'*debug?* (fn [_] false))
+
+user=> (inc #tap (* 2 #tap (+ 3 #tap (* 4 5))))
+=> 47
+
+```
 
 [core.unify]: https://github.com/clojure/core.unify
 [hashtag]: https://github.com/sparkofreason/hashtag
