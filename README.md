@@ -320,6 +320,12 @@ the [hashp][] approach, allowing an arbitrary function to be supplied
 to process the debug info, instead of just printing it with some
 hard-coded formatting choices.
 
+I would guess that hash-meta will usually be used as the basis
+for other libraries providing custom reader macros, as is done
+with [hashtag][].
+
+### Macros as reader tags
+
 One obvious shortcoming became apparent while working on [hashtag][], 
 in that it would only work with functions. Thus was born hash-meta. 
 The Clojure `time` macro provides a simple example.
@@ -415,6 +421,7 @@ dbgn: (loop [acc 1 n 3] (if (zero? n) acc (recur (* acc n) (dec n)))) =>
 |   6
 ```
 
+### Debugging in the context of other macros
 Another case where macro-fu is required is debugging where
 threading macros are used. `->` and `->>` rewrite forms, so
 simply wrapping the form in a `let` and adding some output 
@@ -437,9 +444,42 @@ user=> (->> (range 10)
 => (2 4 6 8 10)
 ```
 
-I would guess that hash-meta will usually be used as the basis
-for other libraries providing custom reader macros, as is done
-with [hashtag][].
+### Configuration-based debugging
+
+Not unique to hash-meta, but it can be handy to leave the debugging
+tags in your code, and elide them at compile time based on some 
+configuration variable.
+
+```clojure
+(ns elision
+  (:require [sparkofreason.hash-meta.core :refer [defreader-n]]))
+
+(def ^:dynamic *debug?* true)
+
+(defreader-n tap
+  (fn [f f' m]
+    (if *debug?*
+      `(let [r# ~f]
+         (tap> {:form '~f'
+                :result r#
+                :metadata ~m})
+         r#)
+      `~f)))
+
+(add-tap println)
+
+user=> (inc #tap (* 2 #tap (+ 3 #tap (* 4 5))))
+{:result 20, :form (* 4 5), :metadata {:line 19, :column 43}}
+{:result 23, :form (+ 3 (* 4 5)), :metadata {:line 19, :column 33}}
+{:result 46, :form (* 2 (+ 3 (* 4 5))), :metadata {:line 19, :column 23}}
+=> 47
+
+(alter-var-root #'*debug?* (fn [_] false))
+
+user=> (inc #tap (* 2 #tap (+ 3 #tap (* 4 5))))
+=> 47
+
+```
 
 [core.unify]: https://github.com/clojure/core.unify
 [hashtag]: https://github.com/sparkofreason/hashtag
