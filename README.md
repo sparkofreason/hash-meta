@@ -74,7 +74,7 @@ makes for easy hacking in the REPL, since you can define and use the tag
 in the same namespace as shown above, without having to add it to your
 `data_readers.clj(c)` file. To use with ClojureScript at all, or to use
 your reader tag in the general case in Clojure code,
-you will need `data_readers.clj(c)`.
+you will need to modify `data_readers.clj(c)`.
 
 hash-meta is best used when you need macro-level functionality to define
 custom reader macros. If you just want customized processing of debug
@@ -123,10 +123,10 @@ best guess of the unmangled form, before macroexpansion and minus any nested
 hashtags. The third argument contains any metadata associated with the form.
 The return value should be a valid Clojure s-expression, as with any macro.
 
-### ClojureScript
+### Using a reader tag
 
-hash-meta definitions can be used with ClojureScript and CLJC, with a little more
-work. Define the reader macro in a clj file:
+hash-meta definitions can be used with in general with CLJ/CLJS/CLJC code. 
+Define the reader macro in a clj file (or via reader-conditional in cljc):
 
 ```clojure
 ;;; hashpp.clj
