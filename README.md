@@ -107,7 +107,7 @@ Example:
 
 ```clojure
 (defreader-n t
-  (fn foo [f f' m]
+  (fn [f f' m]
     `(let [r# ~f]
        (println '~f' "=>" r# "<" (:t ~m "") ">")
        r#)))
