@@ -159,6 +159,10 @@ Then use the macro as required for the environment:
 
 (inc #pp (* 2 #pp (+ 3 #pp (* 4 5))))
 ```
+If you make your own library of reader tags, you can
+make them generally available by preloading the code
+defining the tags via whatever mechanism your tooling
+provides. See [this discussion on hashp for examples](https://github.com/weavejester/hashp#install).
 
 ## `defreader` vs. `defreader-n`
 
